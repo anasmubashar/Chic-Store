@@ -36,9 +36,9 @@ export default function Component() {
 
       if (data.success) {
         alert(data.message);
-        if (data.role === "vendor") {
+        if (data.role === "delivery") {
           console.log("Navigating to /vendor");
-          navigate("/vendor");
+          navigate("/delivery");
         } else if (data.role === "admin") {
           console.log("Navigating to /admin");
           navigate("/admin");
@@ -67,9 +67,12 @@ export default function Component() {
 
       if (data.success) {
         alert(data.message);
-        if (data.role === "vendor") {
+        if (data.role === "delivery") {
           console.log("Navigating to /vendor");
-          navigate("/vendor");
+          navigate("/delivery");
+        } else if (data.role === "admin") {
+          console.log("Navigating to /admin");
+          navigate("/admin");
         } else {
           console.log("Navigating to /");
           navigate("/");
@@ -231,43 +234,6 @@ export default function Component() {
                   required
                   className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-sm text-sm focus:outline-none focus:border-[#2f3633] transition-colors"
                 />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#2f3633] mb-3 tracking-wide">
-                  ACCOUNT TYPE
-                </label>
-                <div className="space-y-3">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="customer"
-                      checked={signupData.userType === "customer"}
-                      onChange={(e) =>
-                        setSignupData({
-                          ...signupData,
-                          userType: e.target.value,
-                        })
-                      }
-                      className="mr-3 text-[#2f3633] focus:ring-[#2f3633]"
-                    />
-                    <span className="text-sm text-[#2f3633]">Customer</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="vendor"
-                      checked={signupData.userType === "vendor"}
-                      onChange={(e) =>
-                        setSignupData({
-                          ...signupData,
-                          userType: e.target.value,
-                        })
-                      }
-                      className="mr-3 text-[#2f3633] focus:ring-[#2f3633]"
-                    />
-                    <span className="text-sm text-[#2f3633]">Vendor</span>
-                  </label>
-                </div>
               </div>
               <button
                 type="submit"

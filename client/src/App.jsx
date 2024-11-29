@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Home from "./pages/customer/Home";
 import Admin from "./pages/admin/Home";
-import Vendor from "./pages/vendor/Home";
+import Delivery from "./pages/delivery/Home";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/vendor" element={<Vendor />} />
+        <Route path="/delivery" element={<Delivery />} />
       </Routes>
     </div>
   );
