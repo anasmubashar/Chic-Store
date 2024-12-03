@@ -2,7 +2,7 @@ import { Search, ShoppingBag, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navigation = [
-  { name: "Collection", href: "#" },
+  { name: "Collection", href: "/products" },
   { name: "New In", href: "#" },
   { name: "Designers", href: "#" },
   { name: "Plus Size", href: "#" },

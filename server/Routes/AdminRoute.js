@@ -5,11 +5,15 @@ const {
   deleteProduct,
   getAllProducts,
 } = require("../Controllers/adminController.js");
-const { isAdmin } = require("../Middlewares/AuthMiddleware.js");
+const {
+  isAdmin,
+  userVerification,
+} = require("../Middlewares/AuthMiddleware.js");
 
 const router = express.Router();
 
 // Apply admin middleware to all routes
+router.use(userVerification);
 router.use(isAdmin);
 
 router.post("/products", addProduct);

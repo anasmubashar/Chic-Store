@@ -1,4 +1,4 @@
-const Product = require("../Models/Product");
+const Product = require("../Models/product");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ const getAllProducts = async (req, res) => {
     if (collection) query.collection = collection;
     if (fabric) query.fabric = fabric;
     if (size) query["sizeVariants.size"] = size;
-    if (color) query["colorVariants.color"] = color;
+    if (color) query.color = color;
 
     if (minPrice || maxPrice) {
       query.price = {};
@@ -52,7 +52,7 @@ const getProductById = async (req, res) => {
 
 const checkStock = async (req, res) => {
   try {
-    const { size, color } = req.query;
+    const { size } = req.query;
     const product = await Product.findById(req.params.id);
 
     if (!product) {
@@ -60,9 +60,8 @@ const checkStock = async (req, res) => {
     }
 
     const sizeVariant = product.sizeVariants.find((v) => v.size === size);
-    const colorVariant = product.colorVariants.find((v) => v.color === color);
 
-    const inStock = sizeVariant?.inStock && colorVariant?.inStock;
+    const inStock = sizeVariant?.inStock;
 
     res.json({ inStock });
   } catch (err) {
