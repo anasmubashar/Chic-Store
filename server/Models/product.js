@@ -1,14 +1,9 @@
 const mongoose = require("mongoose");
 
-const colorVariantSchema = new mongoose.Schema({
-  color: { type: String, required: true },
-  colorCode: { type: String, required: true },
-  inStock: { type: Boolean, default: true },
-});
-
 const sizeVariantSchema = new mongoose.Schema({
   size: { type: String, required: true },
   inStock: { type: Boolean, default: true },
+  stock: { type: Number, default: 0 },
 });
 
 const productSchema = new mongoose.Schema({
@@ -20,13 +15,13 @@ const productSchema = new mongoose.Schema({
   collection: { type: String },
   fabric: {
     type: String,
-    enum: ["Cotton", "Linen", "Wool", "Silk", "Cashmere"],
+    // enum: ["Cotton", "Linen", "Wool", "Silk", "Cashmere"],
   },
   images: [String],
-  colorVariants: [colorVariantSchema],
+  color: { type: String, required: true },
   sizeVariants: [sizeVariantSchema],
   featured: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("products", productSchema);

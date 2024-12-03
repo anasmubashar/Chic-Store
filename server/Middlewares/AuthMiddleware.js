@@ -32,7 +32,7 @@ module.exports.userVerification = (req, res, next) => {
 
 module.exports.isAdmin = (req, res, next) => {
   const { user } = req;
-
+  console.log(user);
   if (!user || user.role !== "admin") {
     return res
       .status(403)

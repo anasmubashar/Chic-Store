@@ -3,27 +3,27 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 const collections = [
   {
     id: 1,
-    name: "Necklaces",
+    name: "Accessories",
     image:
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=387",
+      "https://www.limelight.pk/cdn/shop/files/LB71701-FRE-034_5_-SelfPatternedClutch.jpg?v=1733208996",
   },
   {
     id: 2,
-    name: "Basics",
+    name: "Winter",
     image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=870",
+      "https://www.limelight.pk/cdn/shop/files/I8524JK-FRE-OWH_4_-FurJacket.jpg?v=1728994245",
   },
   {
     id: 3,
-    name: "Dresses",
+    name: "Summer",
     image:
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=383",
+      "https://www.limelight.pk/cdn/shop/files/P9949ST-SML-489_4_-2PieceGripSuit-Embroidered_Pret.jpg?v=1725531577",
   },
   {
     id: 4,
-    name: "Coats",
+    name: "Western",
     image:
-      "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=387",
+      "https://www.limelight.pk/cdn/shop/files/A0974ST-SML-610_6_CrepeCo-OrdSet-Dyed_Pret.jpg?v=1732599747",
   },
 ];
 
@@ -31,7 +31,12 @@ export function Collection() {
   return (
     <section className="py-16 bg-neutral-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-light mb-8">Collection</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-light">Collection</h2>
+          <a href="#" className="text-sm text-gray-600">
+            View All
+          </a>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           {collections.map((collection, index) => (
@@ -39,7 +44,7 @@ export function Collection() {
               key={collection.id}
               className={index === 1 ? "row-span-2" : ""}
             >
-              <AspectRatio ratio={index === 1 ? 9 / 16 : 4 / 3}>
+              <AspectRatio ratio={index === 1 ? 9 / 16 : 4 / 5}>
                 <img
                   src={collection.image}
                   alt={collection.name}
