@@ -5,6 +5,10 @@ const app = express();
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const authRoute = require("./Routes/AuthRoute");
+const productRoutes = require("./Routes/ProductRoute");
+const userRoutes = require("./Routes/UserRoute");
+const orderRoutes = require("./Routes/OrderRoute");
+const adminRoutes = require("./Routes/AdminRoute");
 const { MONGO_URL, PORT } = process.env;
 
 mongoose
@@ -28,7 +32,13 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/", authRoute);
-// Routes
-app.use('/api', require('./routes/driverRoutes'));
-app.use('/api',  require('./routes/busRoutes'));
 
+// Routes
+app.use('/api/driver', require('./routes/driverRoutes'));
+app.use('/api/bus',  require('./routes/busRoutes'));
+
+
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminRoutes);

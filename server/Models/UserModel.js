@@ -19,14 +19,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "customer",
   },
+  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  newsletter: { type: Boolean, default: false },
   createdAt: {
     type: Date,
     default: new Date(),
   },
 });
 
+// Hash password before saving
 userSchema.pre("save", async function () {
-  this.password = await bcrypt.hash(this.password, 12);
+  if (this.isModified("password")) {
+    // Avoid re-hashing if the password is unchanged
+    this.password = await bcrypt.hash(this.password, 12);
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);
