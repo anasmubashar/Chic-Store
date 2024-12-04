@@ -28,3 +28,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/", authRoute);
+// Routes
+app.use('/api', require('./routes/driverRoutes'));
+app.use('/api',  require('./routes/busRoutes'));
+
