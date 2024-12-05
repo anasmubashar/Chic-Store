@@ -28,6 +28,28 @@ const orderSchema = new mongoose.Schema({
     zipCode: String,
     country: String,
   },
+  priority: {
+    type: String,
+    enum: ['Normal', 'High Priority'],
+    required: true
+  },
+ 
+  paymentStatus: {
+    type: String,
+    enum: ['Paid', 'Unpaid', 'Refunded'],
+    required: true
+  },
+  
+  deliveryNumber: {
+    type: String,
+    required: true
+  },
+
+  orderID: {
+    type: String,
+    unique: true
+  },
+
   createdAt: { type: Date, default: Date.now },
 });
 

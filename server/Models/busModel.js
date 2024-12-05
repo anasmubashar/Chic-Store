@@ -1,39 +1,106 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// Define the schema for the cargo bus information
-const busSchema = new mongoose.Schema({
-  busID: {
-    type: String,
-    required: true,
-    unique: true
+const maintenanceRecordSchema = new mongoose.Schema({
+  date: {
+    type: Date,
+    required: true
   },
-  licensePlate: {
+  type: {
+    type: String,
+    enum: ["routine", "repair", "emergency"],
+    required: true
+  },
+  description: {
     type: String,
     required: true
   },
-  currentStatus: {
-    type: String,
-    enum: ['Available', 'Assigned', 'In Maintenance'],
-    required: true
-  },
-  capacity: {
+  cost: {
     type: Number,
-    required: true
+    required: true,
+    min: 0
   },
-  currentLocation: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      required: true
-    },
-    coordinates: {
-      type: [Number],
-      required: true
-    }
+  nextServiceDue: {
+    type: Date,
+    required: true
   }
 });
 
-// Create the model
-const Bus = mongoose.model('Bus', busSchema);
+const busSchema = new mongoose.Schema({
+  busNumber: {
+    type: String,
+    required: [true, "Bus number is required"],
+    unique: true,
+    trim: true
+  },
+  licensePlate: {
+    type: String,
+    required: [true, "License plate is required"],
+    unique: true,
+    trim: true
+  },
+  capacity: {
+    weight: {
+      type: Number,
+      required: [true, "Weight capacity is required"],
+      min: [0, "Capacity cannot be negative"]
+    },
+    unit: {
+      type: String,
+      enum: ["kg", "ton"],
+      default: "kg"
+    }
+  },
+  condition: {
+    type: String,
+    enum: ["excellent", "good", "fair", "maintenance_required"],
+    default: "good"
+  },
+  status: {
+    type: String,
+    enum: ["available", "in_transit", "maintenance", "out_of_service"],
+    default: "available"
+  },
+  currentRoute: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Route",
+    default: null
+  },
+  maintenanceHistory: [maintenanceRecordSchema],
+  currentLocation: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point"
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0]
+    }
+  },
+  assignedDriver: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Driver",
+    default: null
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-module.exports = Bus;
+busSchema.index({ currentLocation: "2dsphere" });
+
+busSchema.pre("save", function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+module.exports = mongoose.model("Bus", busSchema);
