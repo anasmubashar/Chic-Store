@@ -9,6 +9,9 @@ const productRoutes = require("./Routes/ProductRoute");
 const userRoutes = require("./Routes/UserRoute");
 const orderRoutes = require("./Routes/OrderRoute");
 const adminRoutes = require("./Routes/AdminRoute");
+const cartRoutes = require("./Routes/CartRoute");
+const searchRoutes = require("./Routes/searchRoute");
+const modiweekRoutes = require("./Routes/modiweekRoutes");
 const { MONGO_URL, PORT } = process.env;
 
 mongoose
@@ -36,3 +39,6 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/modiweek', modiweekRoutes);
