@@ -8,26 +8,26 @@ const Home = () => {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
-  useEffect(() => {
-    const verifyCookie = async () => {
-      // if (!cookies.token) {
-      //   navigate("/auth");
-      // }
-      const { data } = await axios.post(
-        "http://localhost:4000",
-        {},
-        { withCredentials: true }
-      );
-      const { status, user } = data;
-      setUsername(user.username);
-      return status
-        ? toast(`Hello ${user.username}`, {
-            position: "top-right",
-          })
-        : navigate("/auth");
-    };
-    verifyCookie();
-  }, [cookies, navigate, removeCookie]);
+  // useEffect(() => {
+  //   const verifyCookie = async () => {
+  //     if (!cookies.token) {
+  //       navigate("/auth");
+  //     }
+  //     const { data } = await axios.post(
+  //       "http://localhost:4000",
+  //       {},
+  //       { withCredentials: true }
+  //     );
+  //     const { success, user } = data;
+  //     setUsername(user);
+  //     return success
+  //       ? toast(`Hello ${user}`, {
+  //           position: "top-right",
+  //         })
+  //       : navigate("/auth");
+  //   };
+  //   verifyCookie();
+  // }, [cookies, navigate, removeCookie]);
   const Logout = () => {
     removeCookie("token");
     navigate("/auth");
@@ -37,7 +37,7 @@ const Home = () => {
       <div>
         <h4>
           {" "}
-          Welcome <span>{username} to vendor page</span>
+          Welcome <span>{username} to admin page</span>
         </h4>
         <button onClick={Logout}>LOGOUT</button>
       </div>

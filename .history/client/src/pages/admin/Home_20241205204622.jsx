@@ -13,11 +13,8 @@ const Home = () => {
       // if (!cookies.token) {
       //   navigate("/auth");
       // }
-      const { data } = await axios.post(
-        "http://localhost:4000",
-        {},
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("http://localhost:4000");
+      console.log(data);
       const { status, user } = data;
       setUsername(user.username);
       return status
@@ -37,7 +34,7 @@ const Home = () => {
       <div>
         <h4>
           {" "}
-          Welcome <span>{username} to vendor page</span>
+          Welcome <span>{username} to admin page</span>
         </h4>
         <button onClick={Logout}>LOGOUT</button>
       </div>

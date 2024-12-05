@@ -13,11 +13,7 @@ const Home = () => {
       // if (!cookies.token) {
       //   navigate("/auth");
       // }
-      const { data } = await axios.post(
-        "http://localhost:4000",
-        {},
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("http://localhost:4000");
       const { status, user } = data;
       setUsername(user.username);
       return status

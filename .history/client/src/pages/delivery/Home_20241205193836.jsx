@@ -10,24 +10,24 @@ const Home = () => {
   const [username, setUsername] = useState("");
   useEffect(() => {
     const verifyCookie = async () => {
-      // if (!cookies.token) {
-      //   navigate("/auth");
-      // }
+      if (!cookies.token) {
+        navigate("/auth");
+      }
       const { data } = await axios.post(
         "http://localhost:4000",
         {},
         { withCredentials: true }
       );
       const { status, user } = data;
-      setUsername(user.username);
+      setUsername(user);
       return status
-        ? toast(`Hello ${user.username}`, {
+        ? toast(`Hello ${user}`, {
             position: "top-right",
           })
         : navigate("/auth");
     };
     verifyCookie();
-  }, [cookies, navigate, removeCookie]);
+  }, [cookies, navigate]);
   const Logout = () => {
     removeCookie("token");
     navigate("/auth");

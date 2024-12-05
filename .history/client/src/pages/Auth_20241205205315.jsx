@@ -67,10 +67,10 @@ export default function Component() {
 
       if (data.success) {
         alert(data.message);
-        if (data.user.role === "delivery") {
+        if (data.role === "delivery") {
           console.log("Navigating to /vendor");
           navigate("/delivery");
-        } else if (data.user.role === "admin") {
+        } else if (data.role === "admin") {
           console.log("Navigating to /admin");
           navigate("/admin");
         } else {

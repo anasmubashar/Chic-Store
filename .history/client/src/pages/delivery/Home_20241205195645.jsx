@@ -19,9 +19,9 @@ const Home = () => {
         { withCredentials: true }
       );
       const { status, user } = data;
-      setUsername(user.username);
+      setUsername(user);
       return status
-        ? toast(`Hello ${user.username}`, {
+        ? toast(`Hello ${user}`, {
             position: "top-right",
           })
         : navigate("/auth");
