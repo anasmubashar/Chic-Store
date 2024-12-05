@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/", authRoute);
-app.use("/api/products", productRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/admin", adminRoutes);
+// Routes
+app.use('/api', require('./routes/driverRoutes'));
+app.use('/api',  require('./routes/busRoutes'));
+
