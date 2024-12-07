@@ -8,11 +8,9 @@ const { userVerification } = require("../Middlewares/AuthMiddleware.js");
 
 const router = require("express").Router();
 
-router.use(userVerification);
-
-router.get("/", getCart);
-router.post("/items", addToCart);
-router.patch("/items/:itemId", updateCartItem);
-router.delete("/items/:itemId", removeFromCart);
+router.get("/", userVerification, getCart);
+router.post("/items", userVerification, addToCart);
+router.patch("/items/:itemId", userVerification, updateCartItem);
+router.delete("/items/:itemId", userVerification, removeFromCart);
 
 module.exports = router;

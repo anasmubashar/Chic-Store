@@ -12,3 +12,9 @@ export async function getProduct(id: string) {
   if (!response.ok) throw new Error("Failed to fetch product");
   return response.json();
 }
+
+export async function getCart() {
+  const response = await fetch(`http://localhost:4000/api/cart`);
+  if (!response.ok) throw new Error("Failed to fetch cart");
+  return response.json();
+}
