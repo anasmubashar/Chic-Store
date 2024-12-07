@@ -18,12 +18,14 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import useCartStore from "@/store/useCartStore";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [currentImage, setCurrentImage] = useState(0);
+  const { addToCart, isLoading } = useCartStore();
 
   useEffect(() => {
     if (id) {
@@ -38,6 +40,21 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
+  const handleAddToCart = async () => {
+    if (!selectedSize) {
+      alert("Please select a size before adding to the cart.");
+      return;
+    }
+
+    try {
+      await addToCart(product!._id, 1, selectedSize);
+      alert("Product added to cart successfully!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add product to cart.");
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -115,8 +132,13 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex gap-4">
-              <Button size="lg" className="flex-1">
-                Add to Cart
+              <Button
+                onClick={handleAddToCart}
+                size="lg"
+                className="flex-1"
+                disabled={isLoading}
+              >
+                {isLoading ? "Adding..." : "Add to Cart"}
               </Button>
               <Button size="lg" variant="outline">
                 <Heart className="h-5 w-5" />
