@@ -8,11 +8,7 @@ import ShippingManagement from "@/pages/admin/ShippingManagement/ShippingManagem
 import OrderManagement from "@/pages/admin/OrderManagement/OrderManagement";
 import UserManagement from "@/pages/admin/UserManagement/UserManagement";
 import ProductManagement from "@/pages/admin/ProductManagement/ProductManagement";
-import { InvoicesPage } from "@/pages/delivery/InvoicesPage";
-import DriversPage from "@/pages/delivery/DriversPage";
-import { CargoBusesPage } from "@/pages/delivery/CargoBusesPage";
-import { ProfilePage } from "@/pages/delivery/ProfilePage";
-import { OrdersPage } from "@/pages/delivery/OrdersPage";
+
 function App() {
   return (
     <div className="App">
@@ -26,12 +22,6 @@ function App() {
         <Route path="/admin/reports" element={<SalesReports />} />
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/products" element={<ProductManagement />} />
-        {/* <Route path="/track-orders" element={<OrderTracking />} /> */}
-        <Route path="/invoices" element={<InvoicesPage />} />
-        <Route path="/drivers" element={<DriversPage />} />
-        <Route path="/buses" element={<CargoBusesPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/orders" element={<OrdersPage />} />
       </Routes>
     </div>
   );
