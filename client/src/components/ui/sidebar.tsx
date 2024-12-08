@@ -17,7 +17,7 @@ const sidebarItems = [
     icon: Package,
     label: "Orders",
     href: "/delivery/orders",
-    children: [{ label: "Assign Orders", href: "/orders/assign" }],
+    children: [{ label: "Assign Orders", href: "delivery/orders/assign" }],
   },
   {
     icon: Users,

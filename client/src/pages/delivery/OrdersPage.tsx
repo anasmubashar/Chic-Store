@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useToast } from '../../hooks/use-toast';
-import { OrderMetrics } from '../../components/Delivery/orders/OrderMetrics';
-import { OrderFilters } from '../../components/Delivery/orders/OrderFilters';
-import { OrderTable } from '../../components/Delivery/orders/OrderTable';
-import { Pagination } from '../../components/Delivery/orders/Pagination';
-import { orderApi } from '../../lib/orderApi';
-import { Order, OrderFilters as OrderFiltersType } from '../../types/order';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useToast } from "../../hooks/use-toast";
+import { OrderMetrics } from "../../components/Delivery/orders/OrderMetrics";
+import { OrderFilters } from "../../components/Delivery/orders/OrderFilters";
+import { OrderTable } from "../../components/Delivery/orders/OrderTable";
+import { Pagination } from "../../components/Delivery/orders/Pagination";
+import { orderApi } from "../../lib/orderApi";
+import { Order, OrderFilters as OrderFiltersType } from "../../types/order";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -50,7 +50,7 @@ export function OrdersPage() {
 
   const handleEdit = async (order: Order) => {
     // Implement edit functionality
-    console.log('Edit order:', order);
+    console.log("Edit order:", order);
   };
 
   const handleDelete = async (orderId: string) => {
@@ -81,7 +81,7 @@ export function OrdersPage() {
       </div>
 
       <OrderMetrics metrics={metrics} />
-      
+
       <OrderFilters onFilterChange={setFilters} />
 
       {isLoading ? (
