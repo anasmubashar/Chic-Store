@@ -1,57 +1,71 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// Define the schema for the contact details
-const contactDetailsSchema = new mongoose.Schema({
-  phoneNumber: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function(v) {
-        // Validate Pakistani phone number format
-        return /^((\+92)|(0092))-?\d{3}-?\d{7}$|^\d{11}$|^\d{4}-\d{7}$/.test(v);
-      },
-      message: props => `${props.value} is not a valid Pakistani phone number!`
-    }
-  },
-  address: {
-    type: String,
-    required: true
-  }
-});
-
-// Define the schema for the profile
 const profileSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: [true, "Courier service name is required"],
+    trim: true
   },
   location: {
     type: String,
-    required: true
+    required: [true, "Primary location is required"],
+    trim: true
   },
-  numberOfCities: {
-    type: Number,
-    required: true
-  },
+  cities: [{
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+    }
+  }],
   numberOfBuses: {
     type: Number,
-    required: true
+    required: [true, "Number of buses is required"],
+    min: [1, "Must have at least one bus"]
   },
   numberOfDrivers: {
     type: Number,
-    required: true
+    required: [true, "Number of drivers is required"],
+    min: [1, "Must have at least one driver"]
   },
   contactDetails: {
-    type: contactDetailsSchema,
-    required: true
+    phoneNumber: {
+      type: String,
+      required: [true, "Phone number is required"],
+      match: [/^(\+92|0)?[0-9]{10}$/, "Please enter a valid Pakistani phone number"]
+    },
+    address: {
+      type: String,
+      required: [true, "Address is required"],
+      trim: true
+    }
   },
   profilePicture: {
     type: String,
-    required: true
+    default: null
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
-// Create the model
-const Profile = mongoose.model('Profile', profileSchema);
+// Update the updatedAt timestamp before saving
+profileSchema.pre("save", function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
-module.exports = Profile;
+module.exports = mongoose.model("Profile", profileSchema);
