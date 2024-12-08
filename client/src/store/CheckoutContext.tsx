@@ -1,16 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface ShippingAddress {
-  email: string;
-  firstName: string;
-  lastName: string;
-  company: string;
-  address: string;
-  apartment: string;
+  street: string;
   city: string;
+  province: string;
+  phoneNumber: string;
+  zipCode: string;
   country: string;
-  postalCode: string;
-  phone: string;
 }
 
 interface CheckoutContextType {
@@ -34,16 +30,12 @@ export const CheckoutProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
-    email: "",
-    firstName: "",
-    lastName: "",
-    company: "",
-    address: "",
-    apartment: "",
+    street: "",
     city: "",
+    province: "",
+    phoneNumber: "",
+    zipCode: "",
     country: "",
-    postalCode: "",
-    phone: "",
   });
 
   return (

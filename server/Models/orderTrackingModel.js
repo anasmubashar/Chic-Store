@@ -1,101 +1,109 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// Define the schema for the item list
-const itemSchema = new mongoose.Schema({
-  itemName: {
-    type: String,
-    required: true
+const locationUpdateSchema = new mongoose.Schema({
+  timestamp: {
+    type: Date,
+    default: Date.now
   },
-  quantity: {
-    type: Number,
-    required: true
-  },
-  details: {
-    type: String,
-    required: true
-  }
-});
-
-// Define the schema for the customer information
-const customerInfoSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  contactDetails: {
-    type: String,
-    required: true
-  },
-  address: {
-    type: String,
-    required: true
-  }
-});
-
-// Define the schema for the driver information
-const driverInfoSchema = new mongoose.Schema({
-  driverName: {
-    type: String,
-    required: true
-  },
-  vehicleDetails: {
-    type: String,
-    required: true
-  }
-});
-
-// Define the schema for the order tracking
-const orderTrackingSchema = new mongoose.Schema({
-  trackingID: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  orderID: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  orderStatus: {
-    type: String,
-    enum: ['In Transit', 'In Progress', 'On Hold', 'Completed', 'Canceled'],
-    required: true
-  },
-  currentLocation: {
+  location: {
     type: {
       type: String,
-      enum: ['Point'],
-      required: true
+      enum: ["Point"],
+      default: "Point"
     },
     coordinates: {
       type: [Number],
       required: true
-    }
+    },
+    address: String
   },
-  routeDetails: {
+  status: {
     type: String,
+    enum: ["picked_up", "in_transit", "out_for_delivery", "delivered", "failed_delivery"],
     required: true
   },
-  estimatedDeliveryTime: {
+  notes: String
+});
+
+const orderTrackingSchema = new mongoose.Schema({
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Order",
+    required: true,
+    unique: true
+  },
+  trackingNumber: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  currentStatus: {
+    type: String,
+    enum: ["pending", "in_transit", "out_for_delivery", "delivered", "failed", "on_hold"],
+    default: "pending"
+  },
+  assignedBus: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Bus"
+  },
+  assignedDriver: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Driver"
+  },
+  estimatedDelivery: {
     type: Date,
     required: true
   },
-  customerInfo: {
-    type: customerInfoSchema,
-    required: true
+  actualDelivery: {
+    type: Date
   },
-  driverInfo: {
-    type: driverInfoSchema,
-    required: true
+  locationHistory: [locationUpdateSchema],
+  currentLocation: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point"
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0]
+    },
+    lastUpdated: {
+      type: Date,
+      default: Date.now
+    }
   },
-  itemList: [itemSchema],
-  deliveryStatus: {
-    type: String,
-    required: true
+  statusUpdates: [{
+    status: {
+      type: String,
+      required: true
+    },
+    timestamp: {
+      type: Date,
+      default: Date.now
+    },
+    description: String
+  }],
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
-// Create the model
-const OrderTracking = mongoose.model('OrderTracking', orderTrackingSchema);
+orderTrackingSchema.index({ currentLocation: "2dsphere" });
+orderTrackingSchema.index({ trackingNumber: 1 });
 
-module.exports = OrderTracking;
+orderTrackingSchema.pre("save", function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+module.exports = mongoose.model("OrderTracking", orderTrackingSchema);

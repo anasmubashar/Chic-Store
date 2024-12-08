@@ -1,26 +1,20 @@
 "use client";
 
-import { ChevronLeft, Search, X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import useCartStore from "@/store/useCartStore";
 import { useCheckout } from "@/store/CheckoutContext";
 
 export default function CheckoutInfo() {
   const { shippingAddress, setShippingAddress } = useCheckout();
   const [formData, setFormData] = useState(shippingAddress);
+  const [errors, setErrors] = useState<{
+    [key: string]: string;
+  }>({});
 
   const navigate = useNavigate();
 
@@ -35,6 +29,20 @@ export default function CheckoutInfo() {
   }, [fetchCart]);
 
   const handleNavigation = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Validate form fields
+    for (const [key, value] of Object.entries(formData)) {
+      if (!value) {
+        newErrors[key] = `${key} is required`;
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setShippingAddress(formData);
     navigate("/checkout/payment");
   };
@@ -42,6 +50,14 @@ export default function CheckoutInfo() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error for the field being updated
+    if (errors[name]) {
+      setErrors((prev) => {
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      });
+    }
   };
 
   return (
@@ -71,123 +87,32 @@ export default function CheckoutInfo() {
       <main className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 px-4 py-8 sm:px-6 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-7">
           <div className="space-y-8">
-            {/* Contact Section */}
-            <div>
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-sage-dark">Contact</h2>
-                <p className="text-sm text-gray-600">
-                  Have an Account?{" "}
-                  <a href="/login" className="text-sage-dark hover:underline">
-                    Log In
-                  </a>
-                </p>
-              </div>
-              <div className="mt-4 space-y-4">
-                <div>
-                  <Input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full rounded-none border-gray-300 px-4 py-3 focus:border-sage-dark focus:ring-sage-dark"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Shipping Address */}
             <div>
               <h2 className="text-lg font-medium text-sage-dark">
                 Shipping Address
               </h2>
               <div className="mt-4 space-y-4">
-                <Select
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, country: value }))
-                  }
-                >
-                  <SelectTrigger className="w-full rounded-none border-gray-300 px-4 py-3">
-                    <SelectValue placeholder="Country/Region" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Input
-                    name="firstName"
-                    placeholder="First Name"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                  />
-                  <Input
-                    name="lastName"
-                    placeholder="Last Name"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <Input
-                  name="company"
-                  placeholder="Company (Optional)"
-                  className="rounded-none border-gray-300 px-4 py-3"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                />
-
-                <div className="relative">
-                  <Input
-                    name="address"
-                    placeholder="Address"
-                    className="rounded-none border-gray-300 px-4 py-3 pr-10"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                  />
-                  <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                </div>
-
-                <Input
-                  name="apartment"
-                  placeholder="Apartment, Suite, etc. (Optional)"
-                  className="rounded-none border-gray-300 px-4 py-3"
-                  value={formData.apartment}
-                  onChange={handleInputChange}
-                />
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Input
-                    name="postalCode"
-                    placeholder="Postal Code"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.postalCode}
-                    onChange={handleInputChange}
-                  />
-                  <Input
-                    name="city"
-                    placeholder="City"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="relative">
-                  <Input
-                    name="phone"
-                    type="tel"
-                    placeholder="Phone"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                  />
-                </div>
+                {["street", "city", "province", "zipCode", "phoneNumber"].map(
+                  (field) => (
+                    <div key={field}>
+                      <Input
+                        name={field}
+                        placeholder={field
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (str) => str.toUpperCase())}
+                        className="rounded-none border-gray-300 px-4 py-3"
+                        value={formData[field] || ""}
+                        onChange={handleInputChange}
+                      />
+                      {errors[field] && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors[field]}
+                        </p>
+                      )}
+                    </div>
+                  )
+                )}
               </div>
             </div>
 
@@ -305,7 +230,7 @@ export default function CheckoutInfo() {
               </div>
               <p className="mt-2 text-xs text-gray-500">
                 The total amount you pay includes all applicable customs duties
-                & taxes. We guarantee no additional charges on delivery
+                & taxes. We guarantee no additional charges on delivery.
               </p>
             </div>
           </div>

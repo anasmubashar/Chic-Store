@@ -11,3 +11,8 @@ npm i
 npm install react-redux
 npm install @reduxjs/toolkit
 npm install lucide-react
+
+for http requests
+npm install axios
+npm install date-fns
+
