@@ -34,15 +34,14 @@ app.use(express.json());
 app.use("/", authRoute);
 
 // Routes
-app.use('/api/driver', require('./routes/driverRoutes'));
-app.use('/api/bus',  require('./routes/busRoutes'));
-
+app.use('/api/driver', require('./Routes/driverRoutes'));
+app.use('/api/bus',  require('./Routes/busRoutes'));
+app.use('/api/profile', require('./Routes/profileRoutes'));
+app.use('/api/invoices', require('./Routes/invoiceRoutes'));
+app.use('/api/orders', require('./Routes/orderRoutes'))
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
-// Routes
-app.use('/api', require('./routes/driverRoutes'));
-app.use('/api',  require('./routes/busRoutes'));
 
