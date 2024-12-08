@@ -1,37 +1,22 @@
 "use client";
 
-import { ChevronLeft, Search, X } from "lucide-react";
-
+import { ChevronLeft, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import useCartStore from "@/store/useCartStore";
+import { useCheckout } from "@/store/CheckoutContext";
 
 export default function CheckoutInfo() {
-  const [formData, setFormData] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    company: "",
-    address: "",
-    apartment: "",
-    city: "",
-    country: "",
-    postalCode: "",
-    phone: "",
-    newsletter: false,
-    saveInfo: false,
-  });
+  const { shippingAddress, setShippingAddress } = useCheckout();
+  const [formData, setFormData] = useState(shippingAddress);
+  const [errors, setErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
+  const navigate = useNavigate();
 
   const { items, fetchCart, updateCartItem, removeFromCart, getCartTotal } =
     useCartStore();
@@ -42,6 +27,38 @@ export default function CheckoutInfo() {
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
+
+  const handleNavigation = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Validate form fields
+    for (const [key, value] of Object.entries(formData)) {
+      if (!value) {
+        newErrors[key] = `${key} is required`;
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setShippingAddress(formData);
+    navigate("/checkout/payment");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error for the field being updated
+    if (errors[name]) {
+      setErrors((prev) => {
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen font-sans">
@@ -70,158 +87,32 @@ export default function CheckoutInfo() {
       <main className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 px-4 py-8 sm:px-6 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-7">
           <div className="space-y-8">
-            {/* Contact Section */}
-            <div>
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-sage-dark">Contact</h2>
-                <p className="text-sm text-gray-600">
-                  Have an Account?{" "}
-                  <a href="/login" className="text-sage-dark hover:underline">
-                    Log In
-                  </a>
-                </p>
-              </div>
-              <div className="mt-4 space-y-4">
-                <div>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full rounded-none border-gray-300 px-4 py-3 focus:border-sage-dark focus:ring-sage-dark"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="newsletter"
-                    checked={formData.newsletter}
-                    onCheckedChange={(checked) =>
-                      setFormData({
-                        ...formData,
-                        newsletter: checked as boolean,
-                      })
-                    }
-                    className="rounded border-gray-300 text-sage-dark focus:ring-sage-dark"
-                  />
-                  <Label htmlFor="newsletter" className="text-sm text-gray-600">
-                    Email Me With News And Offers
-                  </Label>
-                </div>
-              </div>
-            </div>
-
             {/* Shipping Address */}
             <div>
               <h2 className="text-lg font-medium text-sage-dark">
                 Shipping Address
               </h2>
               <div className="mt-4 space-y-4">
-                <Select>
-                  <SelectTrigger className="w-full rounded-none border-gray-300 px-4 py-3">
-                    <SelectValue placeholder="Country/Region" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Input
-                    placeholder="First Name"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, firstName: e.target.value })
-                    }
-                  />
-                  <Input
-                    placeholder="Last Name"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lastName: e.target.value })
-                    }
-                  />
-                </div>
-
-                <Input
-                  placeholder="Company (Optional)"
-                  className="rounded-none border-gray-300 px-4 py-3"
-                  value={formData.company}
-                  onChange={(e) =>
-                    setFormData({ ...formData, company: e.target.value })
-                  }
-                />
-
-                <div className="relative">
-                  <Input
-                    placeholder="Address"
-                    className="rounded-none border-gray-300 px-4 py-3 pr-10"
-                    value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
-                  />
-                  <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                </div>
-
-                <Input
-                  placeholder="Apartment, Suite, etc. (Optional)"
-                  className="rounded-none border-gray-300 px-4 py-3"
-                  value={formData.apartment}
-                  onChange={(e) =>
-                    setFormData({ ...formData, apartment: e.target.value })
-                  }
-                />
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Input
-                    placeholder="Postal Code"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.postalCode}
-                    onChange={(e) =>
-                      setFormData({ ...formData, postalCode: e.target.value })
-                    }
-                  />
-                  <Input
-                    placeholder="City"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.city}
-                    onChange={(e) =>
-                      setFormData({ ...formData, city: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="relative">
-                  <Input
-                    type="tel"
-                    placeholder="Phone"
-                    className="rounded-none border-gray-300 px-4 py-3"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="save-info"
-                    checked={formData.saveInfo}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, saveInfo: checked as boolean })
-                    }
-                    className="rounded border-gray-300 text-sage-dark focus:ring-sage-dark"
-                  />
-                  <Label htmlFor="save-info" className="text-sm text-gray-600">
-                    Save This Information For Next Time
-                  </Label>
-                </div>
+                {["street", "city", "province", "zipCode", "phoneNumber"].map(
+                  (field) => (
+                    <div key={field}>
+                      <Input
+                        name={field}
+                        placeholder={field
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (str) => str.toUpperCase())}
+                        className="rounded-none border-gray-300 px-4 py-3"
+                        value={formData[field] || ""}
+                        onChange={handleInputChange}
+                      />
+                      {errors[field] && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors[field]}
+                        </p>
+                      )}
+                    </div>
+                  )
+                )}
               </div>
             </div>
 
@@ -234,7 +125,10 @@ export default function CheckoutInfo() {
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Return to Cart
               </Button>
-              <Button className="bg-sage-dark px-6 py-3 hover:bg-sage-dark/90">
+              <Button
+                onClick={handleNavigation}
+                className="bg-sage-dark px-6 py-3 hover:bg-sage-dark/90"
+              >
                 Continue to Shipping
               </Button>
             </div>
@@ -336,7 +230,7 @@ export default function CheckoutInfo() {
               </div>
               <p className="mt-2 text-xs text-gray-500">
                 The total amount you pay includes all applicable customs duties
-                & taxes. We guarantee no additional charges on delivery
+                & taxes. We guarantee no additional charges on delivery.
               </p>
             </div>
           </div>
