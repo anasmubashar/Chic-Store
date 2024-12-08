@@ -46,7 +46,7 @@
 //   }
 
 //   const editProduct = (updatedProduct) => {
-//     setProducts(products.map(product => 
+//     setProducts(products.map(product =>
 //       product.id === updatedProduct.id ? updatedProduct : product
 //     ))
 //     setShowEditModal(false)
@@ -186,42 +186,59 @@
 // }
 
 // ProductManagement.jsx
-import { useState, useEffect } from 'react';
-import { Search, Filter, Plus, Package, Users, BarChart2, Truck, ShoppingCart, MoreVertical } from 'lucide-react';
-import AddProductModal from './Add-product-form';
-import EditProductModal from './Edit-product-form';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import {
+  Search,
+  Filter,
+  Plus,
+  Package,
+  Users,
+  BarChart2,
+  Truck,
+  ShoppingCart,
+  MoreVertical,
+} from "lucide-react";
+import AddProductModal from "./Add-product-form";
+import EditProductModal from "./Edit-product-form";
+import axios from "axios";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
-    const response = await axios.get('http://localhost:4000/api/products?${searchParams}');
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_URL}/api/products?${searchParams}`
+    );
     setProducts(response.data);
   };
 
   const addProduct = async (newProduct) => {
-    await axios.post('http://localhost:5000/products', newProduct);
+    await axios.post(`${import.meta.env.VITE_SERVER_URL}/products`, newProduct);
     fetchProducts();
     setShowAddModal(false);
   };
 
   const editProduct = async (updatedProduct) => {
-    await axios.put(`http://localhost:5000/products/${updatedProduct._id}`, updatedProduct);
+    await axios.put(
+      `${import.meta.env.VITE_SERVER_URL}/products/${updatedProduct._id}`,
+      updatedProduct
+    );
     fetchProducts();
     setShowEditModal(false);
   };
 
   const deleteProduct = async (productId) => {
-    await axios.delete(`http://localhost:5000/products/${productId}`);
+    await axios.delete(
+      `${import.meta.env.VITE_SERVER_URL}/products/${productId}`
+    );
     fetchProducts();
   };
 
@@ -230,9 +247,10 @@ export default function ProductManagement() {
     setShowEditModal(true);
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -340,7 +358,10 @@ export default function ProductManagement() {
       </main>
 
       {showAddModal && (
-        <AddProductModal onAdd={addProduct} onClose={() => setShowAddModal(false)} />
+        <AddProductModal
+          onAdd={addProduct}
+          onClose={() => setShowAddModal(false)}
+        />
       )}
 
       {showEditModal && (

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Order, OrderFilters, PaginatedOrders } from "@/types/order";
 
-const BASE_URL = "http://localhost:4000/api";
+const BASE_URL = `${import.meta.env.VITE_SERVER_URL}/api`;
 
 export const orderApi = {
   getOrders: async (
