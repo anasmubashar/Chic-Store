@@ -14,6 +14,12 @@ function DeliveryRoutes() {
       <main className="flex-1 overflow-auto">
         <Routes>
           <Route path="/" element={<OrderTracking />} />
+          <Route path="/track-orders" element={<OrderTracking />} />
+          <Route path="/invoices" element={<InvoicesPage />} />
+          <Route path="/drivers" element={<DriversPage />} />
+          <Route path="/buses" element={<CargoBusesPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Routes>
       </main>
     </div>

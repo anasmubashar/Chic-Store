@@ -1,47 +1,53 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Package, Users, Box, User, FileText, Truck, Clock } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Package,
+  Users,
+  Box,
+  User,
+  FileText,
+  Truck,
+  Clock,
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const sidebarItems = [
   {
     icon: Package,
     label: "Orders",
-    href: "/orders",
-    children: [
-      { label: "Assign Orders", href: "/orders/assign" }
-    ]
+    href: "/delivery/orders",
+    children: [{ label: "Assign Orders", href: "/orders/assign" }],
   },
   {
     icon: Users,
     label: "Drivers",
-    href: "/drivers"
+    href: "/delivery/drivers",
   },
   {
     icon: Clock,
     label: "Track Orders",
-    href: "/track-orders"
+    href: "/delivery/track-orders",
   },
   {
     icon: User,
     label: "Profile",
-    href: "/profile"
+    href: "/delivery/profile",
   },
   {
     icon: FileText,
     label: "Invoices",
-    href: "/invoices"
+    href: "/delivery/invoices",
   },
   {
     icon: Truck,
     label: "Cargo Buses",
-    href: "/buses"
-  }
-]
+    href: "/delivery/buses",
+  },
+];
 
 export function Sidebar() {
-  const location = useLocation()
+  const location = useLocation();
 
   return (
     <div className="flex flex-col border-r bg-background h-screen w-64">
@@ -57,7 +63,9 @@ export function Sidebar() {
             <div key={index} className="space-y-1">
               <Link to={item.href}>
                 <Button
-                  variant={location.pathname === item.href ? "secondary" : "ghost"}
+                  variant={
+                    location.pathname === item.href ? "secondary" : "ghost"
+                  }
                   className={cn(
                     "w-full justify-start",
                     location.pathname === item.href && "bg-muted"
@@ -70,7 +78,9 @@ export function Sidebar() {
               {item.children?.map((child, childIndex) => (
                 <Link key={childIndex} to={child.href}>
                   <Button
-                    variant={location.pathname === child.href ? "secondary" : "ghost"}
+                    variant={
+                      location.pathname === child.href ? "secondary" : "ghost"
+                    }
                     className={cn(
                       "w-full justify-start pl-8",
                       location.pathname === child.href && "bg-muted"
@@ -85,6 +95,5 @@ export function Sidebar() {
         </div>
       </ScrollArea>
     </div>
-  )
+  );
 }
-
