@@ -6,6 +6,7 @@ import DriversPage from "@/pages/delivery/DriversPage";
 import { CargoBusesPage } from "@/pages/delivery/CargoBusesPage";
 import { ProfilePage } from "@/pages/delivery/ProfilePage";
 import { OrdersPage } from "@/pages/delivery/OrdersPage";
+import { AssignTaskPage } from "@/pages/delivery/AssignTaskPage";
 
 function DeliveryRoutes() {
   return (
@@ -20,6 +21,7 @@ function DeliveryRoutes() {
           <Route path="/buses" element={<CargoBusesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/orders/assign" element={<AssignTaskPage />} />
         </Routes>
       </main>
     </div>

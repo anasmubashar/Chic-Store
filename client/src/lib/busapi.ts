@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { Bus, BusResponse, CreateBusDto, UpdateBusDto } from '../types/bus';
 
 const api = axios.create({
-  baseURL: 'http://localhost:4006/api',
+  baseURL: 'http://localhost:4000/api',
   headers: {
     'Content-Type': 'application/json'
   }

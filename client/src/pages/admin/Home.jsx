@@ -10,9 +10,9 @@ const Home = () => {
   const [username, setUsername] = useState("");
   useEffect(() => {
     const verifyCookie = async () => {
-      // if (!cookies.token) {
-      //   navigate("/auth");
-      // }
+      if (!cookies.token) {
+        navigate("/auth");
+      }
       const { data } = await axios.post(
         "http://localhost:4000/",
         {},

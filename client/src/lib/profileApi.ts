@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ProfileData } from '../types/profile';
 
-const BASE_URL = 'http://localhost:4006/api';
+const BASE_URL = 'http://localhost:4000/api';
 
 export const profileApi = {
   getProfile: async () => {
