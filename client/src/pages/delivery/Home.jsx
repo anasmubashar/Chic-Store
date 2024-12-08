@@ -14,7 +14,7 @@ const Home = () => {
       //   navigate("/auth");
       // }
       const { data } = await axios.post(
-        "http://localhost:4000",
+        `${import.meta.env.VITE_SERVER_URL}`,
         {},
         { withCredentials: true }
       );

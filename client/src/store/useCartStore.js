@@ -9,7 +9,9 @@ const useCartStore = create((set, get) => ({
   fetchCart: async () => {
     set({ isLoading: true });
     try {
-      const response = await api.get("http://localhost:4000/api/cart");
+      const response = await api.get(
+        `${import.meta.env.VITE_SERVER_URL}/api/cart`
+      );
       set({ items: response.data.items, isLoading: false });
     } catch (error) {
       set({ error: error.message, isLoading: false });
@@ -19,11 +21,14 @@ const useCartStore = create((set, get) => ({
   addToCart: async (productId, quantity, size) => {
     set({ isLoading: true });
     try {
-      const response = await api.post("http://localhost:4000/api/cart/items", {
-        productId,
-        quantity,
-        size,
-      });
+      const response = await api.post(
+        `${import.meta.env.VITE_SERVER_URL}/api/cart/items`,
+        {
+          productId,
+          quantity,
+          size,
+        }
+      );
       set({ items: response.data.items, isLoading: false });
     } catch (error) {
       set({ error: error.message, isLoading: false });
@@ -34,7 +39,7 @@ const useCartStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await api.patch(
-        `http://localhost:4000/api/cart/items/${itemId}`,
+        `${import.meta.env.VITE_SERVER_URL}/api/cart/items/${itemId}`,
         {
           quantity,
         }
@@ -49,7 +54,7 @@ const useCartStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await api.delete(
-        `http://localhost:4000/api/cart/items/${itemId}`
+        `${import.meta.env.VITE_SERVER_URL}/api/cart/items/${itemId}`
       );
       set({ items: response.data.items, isLoading: false });
     } catch (error) {

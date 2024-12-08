@@ -29,7 +29,7 @@ export default function Component() {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/login",
+        `${import.meta.env.VITE_SERVER_URL}/login`,
         loginData,
         { withCredentials: true }
       );
@@ -60,7 +60,7 @@ export default function Component() {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/signup",
+        `${import.meta.env.VITE_SERVER_URL}/signup`,
         signupData,
         { withCredentials: true }
       );
