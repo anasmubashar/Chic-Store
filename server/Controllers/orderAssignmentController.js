@@ -1,26 +1,24 @@
-const OrderAssignment = require('../Models/orderAssignmentModel');
-const AssignmentHistory = require('../Models/assignmentHistoryModel');
+const Order = require('../Models/order');
 const Bus = require('../Models/busModel');
 const Driver = require('../Models/driverModel');
-const Order = require('../Models/orderModel');
+const OrderAssignment = require('../Models/orderAssignmentModel');
 
 // Utility function to find the best available bus
 const findBestBus = async (order) => {
   return await Bus.findOne({
-    status: "available",
-    "capacity.weight": { $gte: order.shipmentDetails.weight },
-    isActive: true
-  }).sort({ "capacity.weight": 1 });
+    status: 'available',
+    capacity: { $gte: order.weight },
+  }).sort({ capacity: 1 });
 };
 
 // Utility function to find the best available driver
 const findBestDriver = async (busLocation) => {
   return await Driver.findOne({
     isActive: true,
-    assignedBus: null
+    assignedBus: null,
   }).where('currentLocation').near({
     center: busLocation,
-    spherical: true
+    spherical: true,
   });
 };
 
@@ -42,30 +40,25 @@ exports.autoAssignOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No suitable driver available' });
     }
 
-    const assignment = new OrderAssignment({
-      orderId: order._id,
-      busId: bestBus._id,
-      driverId: bestDriver._id,
-      assignmentType: 'automatic',
-      assignedBy: req.user._id,
-      priority: order.priority,
-      routeDetails: {
-        startLocation: bestBus.currentLocation,
-        endLocation: {
-          type: 'Point',
-          coordinates: [order.shippingAddress.coordinates]
-        }
-      }
+    const orderAssignment = new OrderAssignment({
+      order: order._id,
+      bus: bestBus._id,
+      driver: bestDriver._id,
+      assignedAt: Date.now(),
+      status: 'assigned',
     });
 
-    await assignment.save();
+    await orderAssignment.save();
 
-    // Update bus and driver status
+    // Update order, bus, and driver status
+    order.status = 'processing';
     bestBus.status = 'in_transit';
+    bestDriver.isActive = false;
     bestDriver.assignedBus = bestBus._id;
-    await Promise.all([bestBus.save(), bestDriver.save()]);
 
-    res.status(201).json({ success: true, data: assignment });
+    await Promise.all([order.save(), bestBus.save(), bestDriver.save()]);
+
+    res.status(200).json({ success: true, data: orderAssignment });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -76,41 +69,33 @@ exports.manualAssignment = async (req, res) => {
   try {
     const { orderId, busId, driverId } = req.body;
 
-    const [order, bus, driver] = await Promise.all([
-      Order.findById(orderId),
-      Bus.findById(busId),
-      Driver.findById(driverId)
-    ]);
+    const order = await Order.findById(orderId);
+    const bus = await Bus.findById(busId);
+    const driver = await Driver.findById(driverId);
 
     if (!order || !bus || !driver) {
       return res.status(404).json({ success: false, message: 'Order, bus, or driver not found' });
     }
 
-    if (bus.status !== 'available' || !bus.isActive) {
-      return res.status(400).json({ success: false, message: 'Selected bus is not available' });
-    }
-
-    if (driver.assignedBus || !driver.isActive) {
-      return res.status(400).json({ success: false, message: 'Selected driver is not available' });
-    }
-
-    const assignment = new OrderAssignment({
-      orderId,
-      busId,
-      driverId,
-      assignmentType: 'manual',
-      assignedBy: req.user._id,
-      priority: order.priority
+    const orderAssignment = new OrderAssignment({
+      order: order._id,
+      bus: bus._id,
+      driver: driver._id,
+      assignedAt: Date.now(),
+      status: 'assigned',
     });
 
-    await assignment.save();
+    await orderAssignment.save();
 
-    // Update statuses
+    // Update order, bus, and driver status
+    order.status = 'processing';
     bus.status = 'in_transit';
-    driver.assignedBus = busId;
-    await Promise.all([bus.save(), driver.save()]);
+    driver.isActive = false;
+    driver.assignedBus = bus._id;
 
-    res.status(201).json({ success: true, data: assignment });
+    await Promise.all([order.save(), bus.save(), driver.save()]);
+
+    res.status(200).json({ success: true, data: orderAssignment });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -119,24 +104,34 @@ exports.manualAssignment = async (req, res) => {
 // Update assignment
 exports.updateAssignment = async (req, res) => {
   try {
-    const assignment = await OrderAssignment.findById(req.params.id);
+    const { assignmentId, busId, driverId } = req.body;
+
+    const assignment = await OrderAssignment.findById(assignmentId);
     if (!assignment) {
       return res.status(404).json({ success: false, message: 'Assignment not found' });
     }
 
-    // Create history record
-    const history = new AssignmentHistory({
-      assignmentId: assignment._id,
-      orderId: assignment.orderId,
-      previousStatus: assignment.status,
-      newStatus: req.body.status || assignment.status,
-      reason: req.body.reason,
-      changedBy: req.user._id
-    });
+    const newBus = await Bus.findById(busId);
+    const newDriver = await Driver.findById(driverId);
+
+    if (!newBus || !newDriver) {
+      return res.status(404).json({ success: false, message: 'New bus or driver not found' });
+    }
+
+    // Update old bus and driver status
+    await Bus.findByIdAndUpdate(assignment.bus, { status: 'available' });
+    await Driver.findByIdAndUpdate(assignment.driver, { isActive: true, assignedBus: null });
 
     // Update assignment
-    Object.assign(assignment, req.body);
-    await Promise.all([assignment.save(), history.save()]);
+    assignment.bus = newBus._id;
+    assignment.driver = newDriver._id;
+    await assignment.save();
+
+    // Update new bus and driver status
+    newBus.status = 'in_transit';
+    newDriver.isActive = false;
+    newDriver.assignedBus = newBus._id;
+    await Promise.all([newBus.save(), newDriver.save()]);
 
     res.status(200).json({ success: true, data: assignment });
   } catch (error) {
@@ -148,9 +143,9 @@ exports.updateAssignment = async (req, res) => {
 exports.getAssignment = async (req, res) => {
   try {
     const assignment = await OrderAssignment.findById(req.params.id)
-      .populate('orderId')
-      .populate('busId')
-      .populate('driverId');
+      .populate('order')
+      .populate('bus')
+      .populate('driver');
 
     if (!assignment) {
       return res.status(404).json({ success: false, message: 'Assignment not found' });
@@ -166,15 +161,15 @@ exports.getAssignment = async (req, res) => {
 exports.listAssignments = async (req, res) => {
   try {
     const { status, priority, page = 1, limit = 10 } = req.query;
-    const query = { isActive: true };
+    const query = {};
 
     if (status) query.status = status;
     if (priority) query.priority = priority;
 
     const assignments = await OrderAssignment.find(query)
-      .populate('orderId')
-      .populate('busId')
-      .populate('driverId')
+      .populate('order')
+      .populate('bus')
+      .populate('driver')
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
