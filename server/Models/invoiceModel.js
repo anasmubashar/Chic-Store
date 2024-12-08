@@ -1,123 +1,162 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { INVOICE_STATUSES } = require('../constants/invoiceConstants');
 
+// Invoice Item Schema for line items
 const invoiceItemSchema = new mongoose.Schema({
-  description: {
-    type: String,
-    required: true
+  productId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'products', 
+    required: true 
   },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1
+  productName: { 
+    type: String, 
+   
   },
-  unitPrice: {
-    type: Number,
-    required: true,
-    min: 0
+  quantity: { 
+    type: Number, 
+    required: true, 
+    min: [1, 'Quantity must be at least 1'] 
   },
-  amount: {
-    type: Number,
-    required: true,
-    min: 0
+  unitPrice: { 
+    type: Number, 
+    required: true, 
+    min: [0, 'Unit price cannot be negative'] 
+  },
+  subtotal: { 
+    type: Number, 
+    required: true, 
+    min: [0, 'Subtotal cannot be negative'] 
   }
 });
 
+// Main Invoice Schema
 const invoiceSchema = new mongoose.Schema({
   invoiceNumber: {
-    type: String,
-    required: true,
-    unique: true
+    type: String, 
+    required: true, 
+    unique: true,
+    default: () => `INV-${Date.now()}`
   },
+  
   orderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Order",
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'orders', 
     required: true
   },
+  
   customerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'customers', 
     required: true
   },
-  items: [invoiceItemSchema],
+  
+  invoiceItems: [invoiceItemSchema],
+  
   subtotal: {
-    type: Number,
+    type: Number, 
     required: true,
-    min: 0
+    min: [0, 'Subtotal cannot be negative']
   },
-  tax: {
-    type: Number,
+  
+  taxRate: {
+    type: Number, 
+    default: 0,
+    min: [0, 'Tax rate cannot be negative'],
+    max: [100, 'Tax rate cannot exceed 100%']
+  },
+  
+  taxAmount: {
+    type: Number, 
     required: true,
-    min: 0
+    min: [0, 'Tax amount cannot be negative']
   },
+  
   totalAmount: {
-    type: Number,
+    type: Number, 
     required: true,
-    min: 0
+    min: [0, 'Total amount cannot be negative']
   },
+  
+  invoiceDate: {
+    type: Date, 
+    default: Date.now,
+    required: true
+  },
+  
+  dueDate: {
+    type: Date, 
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value >= this.invoiceDate;
+      },
+      message: 'Due date must be on or after the invoice date'
+    }
+  },
+  
   status: {
     type: String,
-    enum: ["draft", "sent", "paid", "overdue", "cancelled", "refunded"],
-    default: "draft"
+    enum: Object.values(INVOICE_STATUSES),
+    default: INVOICE_STATUSES.DRAFT
   },
-  dueDate: {
-    type: Date,
-    required: true
-  },
+  
   paymentDate: {
-    type: Date
+    type: Date,
+    default: null
   },
-  paymentMethod: {
-    type: String,
-    enum: ["cash", "bank_transfer", "credit_card", "debit_card", "other"],
-    required: true
-  },
-  notes: {
-    type: String,
-    trim: true
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
+  
   createdAt: {
-    type: Date,
+    type: Date, 
     default: Date.now
   },
+  
   updatedAt: {
-    type: Date,
+    type: Date, 
     default: Date.now
   }
+}, {
+  timestamps: true
 });
 
-// Indexes for common queries
-invoiceSchema.index({ invoiceNumber: 1 });
-invoiceSchema.index({ customerId: 1, createdAt: -1 });
-invoiceSchema.index({ status: 1, dueDate: 1 });
-
-// Update timestamps
-invoiceSchema.pre("save", function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
-// Calculate totals before saving
-invoiceSchema.pre("save", function(next) {
-  if (this.isModified("items")) {
-    this.subtotal = this.items.reduce((sum, item) => sum + item.amount, 0);
-    this.totalAmount = this.subtotal + this.tax;
+// Pre-save middleware to calculate totals and update status
+invoiceSchema.pre('save', function(next) {
+  // Calculate subtotal from invoice items
+  if (this.invoiceItems && this.invoiceItems.length > 0) {
+    this.subtotal = this.invoiceItems.reduce((total, item) => {
+      item.subtotal = item.quantity * item.unitPrice;
+      return total + item.subtotal;
+    }, 0);
+    
+    // Calculate tax amount
+    this.taxAmount = this.subtotal * (this.taxRate / 100);
+    
+    // Calculate total amount
+    this.totalAmount = this.subtotal + this.taxAmount;
   }
-  next();
-});
-
-// Auto-update status based on due date
-invoiceSchema.pre("save", function(next) {
-  if (this.status !== "paid" && this.status !== "cancelled") {
-    const today = new Date();
-    if (this.dueDate < today) {
-      this.status = "overdue";
-    }
+  
+  // Automatically update status based on dates
+  const now = new Date();
+  if (this.paymentDate) {
+    this.status = INVOICE_STATUSES.PAID;
+  } else if (now > this.dueDate) {
+    this.status = INVOICE_STATUSES.OVERDUE;
+  } else if (this.invoiceDate <= now) {
+    this.status = INVOICE_STATUSES.SENT;
   }
+  
   next();
 });
 
-module.exports = mongoose.model("Invoice", invoiceSchema);
+// Static method for status constants
+invoiceSchema.statics.STATUS = INVOICE_STATUSES;
+
+// Indexing for performance and search optimization
+invoiceSchema.index({ 
+  invoiceNumber: 'text', 
+  'customerId': 1, 
+  'orderId': 1,
+  status: 1, 
+  invoiceDate: -1 
+});
+
+module.exports = mongoose.model('invoices', invoiceSchema);

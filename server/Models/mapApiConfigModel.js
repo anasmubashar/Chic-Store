@@ -12,8 +12,9 @@ const mapApiConfigSchema = new mongoose.Schema({
     required: [true, "API key is required"]
   },
   baseUrl: {
-    type: String,
-    required: [true, "Base URL is required"]
+      type: String,
+      required: [true, "Base URL is required"],
+      default: 'https://maps.googleapis.com/maps/api'
   },
   rateLimit: {
     requests: {
