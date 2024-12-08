@@ -8,7 +8,7 @@ import ProductDetailPage from "@/pages/customer/ProductDetailPage";
 import CheckoutInfo from "@/pages/customer/CheckoutInfo";
 import CheckoutShipping from "@/pages/customer/CheckoutShipping";
 import CheckoutPayment from "@/pages/customer/CheckoutPayment";
-
+import { CheckoutProvider } from "@/store/CheckoutContext";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import SidebarLayout from "./components/Layout";
@@ -30,9 +30,25 @@ function App() {
         <Route path="/delivery" element={<Delivery />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
-        <Route path="/checkout/info" element={<CheckoutInfo />} />
+
+        <Route
+          path="/checkout/info"
+          element={
+            <CheckoutProvider>
+              <CheckoutInfo />
+            </CheckoutProvider>
+          }
+        />
+
         <Route path="/checkout/shipping" element={<CheckoutShipping />} />
-        <Route path="/checkout/payment" element={<CheckoutPayment />} />
+        <Route
+          path="/checkout/payment"
+          element={
+            <CheckoutProvider>
+              <CheckoutPayment />
+            </CheckoutProvider>
+          }
+        />
       </Routes>
     </div>
   );

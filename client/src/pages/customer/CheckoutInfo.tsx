@@ -1,8 +1,8 @@
 "use client";
 
 import { ChevronLeft, Search, X } from "lucide-react";
-
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,22 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useCartStore from "@/store/useCartStore";
+import { useCheckout } from "@/store/CheckoutContext";
 
 export default function CheckoutInfo() {
-  const [formData, setFormData] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    company: "",
-    address: "",
-    apartment: "",
-    city: "",
-    country: "",
-    postalCode: "",
-    phone: "",
-    newsletter: false,
-    saveInfo: false,
-  });
+  const { shippingAddress, setShippingAddress } = useCheckout();
+  const [formData, setFormData] = useState(shippingAddress);
+
+  const navigate = useNavigate();
 
   const { items, fetchCart, updateCartItem, removeFromCart, getCartTotal } =
     useCartStore();
@@ -42,6 +33,16 @@ export default function CheckoutInfo() {
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
+
+  const handleNavigation = () => {
+    setShippingAddress(formData);
+    navigate("/checkout/payment");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div className="min-h-screen font-sans">
@@ -85,29 +86,12 @@ export default function CheckoutInfo() {
                 <div>
                   <Input
                     type="email"
+                    name="email"
                     placeholder="Email"
                     className="w-full rounded-none border-gray-300 px-4 py-3 focus:border-sage-dark focus:ring-sage-dark"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="newsletter"
-                    checked={formData.newsletter}
-                    onCheckedChange={(checked) =>
-                      setFormData({
-                        ...formData,
-                        newsletter: checked as boolean,
-                      })
-                    }
-                    className="rounded border-gray-300 text-sage-dark focus:ring-sage-dark"
-                  />
-                  <Label htmlFor="newsletter" className="text-sm text-gray-600">
-                    Email Me With News And Offers
-                  </Label>
                 </div>
               </div>
             </div>
@@ -118,7 +102,11 @@ export default function CheckoutInfo() {
                 Shipping Address
               </h2>
               <div className="mt-4 space-y-4">
-                <Select>
+                <Select
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, country: value }))
+                  }
+                >
                   <SelectTrigger className="w-full rounded-none border-gray-300 px-4 py-3">
                     <SelectValue placeholder="Country/Region" />
                   </SelectTrigger>
@@ -131,96 +119,74 @@ export default function CheckoutInfo() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
+                    name="firstName"
                     placeholder="First Name"
                     className="rounded-none border-gray-300 px-4 py-3"
                     value={formData.firstName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, firstName: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
                   <Input
+                    name="lastName"
                     placeholder="Last Name"
                     className="rounded-none border-gray-300 px-4 py-3"
                     value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lastName: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
                 </div>
 
                 <Input
+                  name="company"
                   placeholder="Company (Optional)"
                   className="rounded-none border-gray-300 px-4 py-3"
                   value={formData.company}
-                  onChange={(e) =>
-                    setFormData({ ...formData, company: e.target.value })
-                  }
+                  onChange={handleInputChange}
                 />
 
                 <div className="relative">
                   <Input
+                    name="address"
                     placeholder="Address"
                     className="rounded-none border-gray-300 px-4 py-3 pr-10"
                     value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
                   <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 </div>
 
                 <Input
+                  name="apartment"
                   placeholder="Apartment, Suite, etc. (Optional)"
                   className="rounded-none border-gray-300 px-4 py-3"
                   value={formData.apartment}
-                  onChange={(e) =>
-                    setFormData({ ...formData, apartment: e.target.value })
-                  }
+                  onChange={handleInputChange}
                 />
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
+                    name="postalCode"
                     placeholder="Postal Code"
                     className="rounded-none border-gray-300 px-4 py-3"
                     value={formData.postalCode}
-                    onChange={(e) =>
-                      setFormData({ ...formData, postalCode: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
                   <Input
+                    name="city"
                     placeholder="City"
                     className="rounded-none border-gray-300 px-4 py-3"
                     value={formData.city}
-                    onChange={(e) =>
-                      setFormData({ ...formData, city: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
                 </div>
 
                 <div className="relative">
                   <Input
+                    name="phone"
                     type="tel"
                     placeholder="Phone"
                     className="rounded-none border-gray-300 px-4 py-3"
                     value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
+                    onChange={handleInputChange}
                   />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="save-info"
-                    checked={formData.saveInfo}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, saveInfo: checked as boolean })
-                    }
-                    className="rounded border-gray-300 text-sage-dark focus:ring-sage-dark"
-                  />
-                  <Label htmlFor="save-info" className="text-sm text-gray-600">
-                    Save This Information For Next Time
-                  </Label>
                 </div>
               </div>
             </div>
@@ -234,7 +200,10 @@ export default function CheckoutInfo() {
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Return to Cart
               </Button>
-              <Button className="bg-sage-dark px-6 py-3 hover:bg-sage-dark/90">
+              <Button
+                onClick={handleNavigation}
+                className="bg-sage-dark px-6 py-3 hover:bg-sage-dark/90"
+              >
                 Continue to Shipping
               </Button>
             </div>
