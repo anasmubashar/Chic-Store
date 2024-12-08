@@ -1,68 +1,82 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Search, Filter, Package, Users, BarChart2, Truck, Edit, Trash2, X } from 'lucide-react'
+import { useState } from "react";
+import {
+  Search,
+  Filter,
+  Package,
+  Users,
+  BarChart2,
+  Truck,
+  Edit,
+  Trash2,
+  X,
+} from "lucide-react";
 
 export default function OrderManagement() {
   const [orders, setOrders] = useState([
     {
-      id: '#1',
-      customer: 'John Doe',
-      status: 'Processing',
-      total: '$299.99',
-      date: '2024-03-15'
+      id: "#1",
+      customer: "John Doe",
+      status: "Processing",
+      total: "$299.99",
+      date: "2024-03-15",
     },
     {
-      id: '#2', 
-      customer: 'Jane Smith',
-      status: 'Shipped',
-      total: '$149.5',
-      date: '2024-03-14'
+      id: "#2",
+      customer: "Jane Smith",
+      status: "Shipped",
+      total: "$149.5",
+      date: "2024-03-14",
     },
     {
-      id: '#3',
-      customer: 'Mike Johnson', 
-      status: 'Delivered',
-      total: '$499.99',
-      date: '2024-03-13'
-    }
-  ])
+      id: "#3",
+      customer: "Mike Johnson",
+      status: "Delivered",
+      total: "$499.99",
+      date: "2024-03-13",
+    },
+  ]);
 
-  const [editingOrder, setEditingOrder] = useState(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [editingOrder, setEditingOrder] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const getStatusColor = (status) => {
-    switch(status) {
-      case 'Processing':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'Shipped':
-        return 'bg-blue-100 text-blue-800'
-      case 'Delivered':
-        return 'bg-green-100 text-green-800'
+    switch (status) {
+      case "Processing":
+        return "bg-yellow-100 text-yellow-800";
+      case "Shipped":
+        return "bg-blue-100 text-blue-800";
+      case "Delivered":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800'
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   const handleEdit = (order) => {
-    setEditingOrder({...order})
-    setIsEditing(true)
-  }
+    setEditingOrder({ ...order });
+    setIsEditing(true);
+  };
 
   const handleDelete = (id) => {
-    setOrders(orders.filter(order => order.id !== id))
-  }
+    setOrders(orders.filter((order) => order.id !== id));
+  };
 
   const handleSave = () => {
-    setOrders(orders.map(order => order.id === editingOrder.id ? editingOrder : order))
-    setIsEditing(false)
-    setEditingOrder(null)
-  }
+    setOrders(
+      orders.map((order) =>
+        order.id === editingOrder.id ? editingOrder : order
+      )
+    );
+    setIsEditing(false);
+    setEditingOrder(null);
+  };
 
   const handleCancel = () => {
-    setIsEditing(false)
-    setEditingOrder(null)
-  }
+    setIsEditing(false);
+    setEditingOrder(null);
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -72,23 +86,38 @@ export default function OrderManagement() {
           <h1 className="text-xl font-bold">Admin Panel</h1>
         </div>
         <nav className="mt-6">
-          <a href="#" className="flex items-center px-6 py-3 text-blue-600 bg-blue-50">
+          <a
+            href="#"
+            className="flex items-center px-6 py-3 text-blue-600 bg-blue-50"
+          >
             <Package className="w-5 h-5 mr-3" />
             Orders
           </a>
-          <a href="#" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50">
+          <a
+            href="#"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
+          >
             <Package className="w-5 h-5 mr-3" />
             Products
           </a>
-          <a href="#" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50">
+          <a
+            href="#"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
+          >
             <Users className="w-5 h-5 mr-3" />
             Users
           </a>
-          <a href="#" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50">
+          <a
+            href="#"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
+          >
             <BarChart2 className="w-5 h-5 mr-3" />
             Reports
           </a>
-          <a href="#" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50">
+          <a
+            href="#"
+            className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
+          >
             <Truck className="w-5 h-5 mr-3" />
             Shipping
           </a>
@@ -120,12 +149,24 @@ export default function OrderManagement() {
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">ORDER ID</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">CUSTOMER</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">STATUS</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">TOTAL</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">DATE</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">ACTIONS</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                  ORDER ID
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                  CUSTOMER
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                  STATUS
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                  TOTAL
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                  DATE
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                  ACTIONS
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -134,7 +175,11 @@ export default function OrderManagement() {
                   <td className="px-6 py-4">{order.id}</td>
                   <td className="px-6 py-4">{order.customer}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(order.status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                        order.status
+                      )}`}
+                    >
                       {order.status}
                     </span>
                   </td>
@@ -168,34 +213,55 @@ export default function OrderManagement() {
             <div className="bg-white p-8 rounded-lg w-1/2">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Edit Order</h3>
-                <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700">
+                <button
+                  onClick={handleCancel}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   <X className="w-6 h-6" />
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Order ID</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Order ID
+                  </label>
                   <input
                     type="text"
                     value={editingOrder.id}
-                    onChange={(e) => setEditingOrder({...editingOrder, id: e.target.value})}
+                    onChange={(e) =>
+                      setEditingOrder({ ...editingOrder, id: e.target.value })
+                    }
                     className="mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Customer</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Customer
+                  </label>
                   <input
                     type="text"
                     value={editingOrder.customer}
-                    onChange={(e) => setEditingOrder({...editingOrder, customer: e.target.value})}
+                    onChange={(e) =>
+                      setEditingOrder({
+                        ...editingOrder,
+                        customer: e.target.value,
+                      })
+                    }
                     className="mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Status</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Status
+                  </label>
                   <select
                     value={editingOrder.status}
-                    onChange={(e) => setEditingOrder({...editingOrder, status: e.target.value})}
+                    onChange={(e) =>
+                      setEditingOrder({
+                        ...editingOrder,
+                        status: e.target.value,
+                      })
+                    }
                     className="mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="Processing">Processing</option>
@@ -204,20 +270,31 @@ export default function OrderManagement() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Total</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Total
+                  </label>
                   <input
                     type="text"
                     value={editingOrder.total}
-                    onChange={(e) => setEditingOrder({...editingOrder, total: e.target.value})}
+                    onChange={(e) =>
+                      setEditingOrder({
+                        ...editingOrder,
+                        total: e.target.value,
+                      })
+                    }
                     className="mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Date</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Date
+                  </label>
                   <input
                     type="date"
                     value={editingOrder.date}
-                    onChange={(e) => setEditingOrder({...editingOrder, date: e.target.value})}
+                    onChange={(e) =>
+                      setEditingOrder({ ...editingOrder, date: e.target.value })
+                    }
                     className="mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -241,6 +318,5 @@ export default function OrderManagement() {
         )}
       </main>
     </div>
-  )
+  );
 }
-

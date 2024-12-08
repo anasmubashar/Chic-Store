@@ -25,7 +25,11 @@ app.listen(PORT, () => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:4000"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4000",
+      "http://localhost:5000",
+    ],
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   })
@@ -41,7 +45,7 @@ app.use('/api/driver', require('./Routes/driverRoutes'));
 app.use('/api/bus',  require('./Routes/busRoutes'));
 app.use('/api/profile', require('./Routes/profileRoutes'));
 app.use('/api/invoices', require('./Routes/invoiceRoutes'));
-app.use('/api/delivery/orders', require('./Routes/orderRoutes'));
+app.use('/api/orders', require('./Routes/orderRoutes'));
 app.use('/api/assign', require('./Routes/orderAssignmentRoutes'));
 app.use('/api/shipment-details', require('./Routes/shipmentRoute'));
 
