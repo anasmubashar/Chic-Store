@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext", // Use the latest ECMAScript features
+    "module": "ESNext", // Use ESNext module system
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Enable support for modern web APIs
+    "jsx": "react-jsx", // Use React's modern JSX runtime
+    "baseUrl": ".", // Set base URL for module resolution
+    "paths": {
+      // Configure path aliases
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src"], // Include source files
+  "exclude": ["node_modules", "dist"] // Exclude unnecessary files
+}

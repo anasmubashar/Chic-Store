@@ -20,7 +20,7 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    const { productId, quantity, size, color } = req.body;
+    const { productId, quantity, size } = req.body;
 
     const product = await Product.findById(productId);
     if (!product) {
@@ -29,8 +29,7 @@ const addToCart = async (req, res) => {
 
     // Check stock
     const sizeVariant = product.sizeVariants.find((v) => v.size === size);
-    const colorVariant = product.colorVariants.find((v) => v.color === color);
-    if (!sizeVariant?.inStock || !colorVariant?.inStock) {
+    if (!sizeVariant?.inStock) {
       return res.status(400).json({ error: "Product variant out of stock" });
     }
 
@@ -40,10 +39,7 @@ const addToCart = async (req, res) => {
     }
 
     const existingItem = cart.items.find(
-      (item) =>
-        item.product.toString() === productId &&
-        item.size === size &&
-        item.color === color
+      (item) => item.product.toString() === productId && item.size === size
     );
 
     if (existingItem) {
@@ -53,7 +49,7 @@ const addToCart = async (req, res) => {
         product: productId,
         quantity,
         size,
-        color,
+        color: product.color,
         price: product.price,
       });
     }

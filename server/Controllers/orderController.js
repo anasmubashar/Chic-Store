@@ -18,11 +18,8 @@ const createOrder = async (req, res) => {
       const sizeVariant = product.sizeVariants.find(
         (v) => v.size === item.size
       );
-      const colorVariant = product.colorVariants.find(
-        (v) => v.color === item.color
-      );
 
-      if (!sizeVariant?.inStock || !colorVariant?.inStock) {
+      if (!sizeVariant?.inStock) {
         return res.status(400).json({
           error: `${product.name} is out of stock in selected variant`,
         });
