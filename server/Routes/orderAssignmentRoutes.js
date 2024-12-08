@@ -6,7 +6,7 @@ const {
   updateAssignment,
   getAssignment,
   listAssignments
-} = require('../Controllers/assignmentController');
+} = require('../Controllers/orderAssignmentController');
 
 // Auto-assign order to bus and driver
 router.post('/auto-assign/:orderId', autoAssignOrder);

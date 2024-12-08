@@ -41,7 +41,9 @@ app.use('/api/driver', require('./Routes/driverRoutes'));
 app.use('/api/bus',  require('./Routes/busRoutes'));
 app.use('/api/profile', require('./Routes/profileRoutes'));
 app.use('/api/invoices', require('./Routes/invoiceRoutes'));
-app.use('/api/orders', require('./Routes/orderRoutes'))
+app.use('/api/orders', require('./Routes/orderRoutes'));
+app.use('/api/assign', require('./Routes/orderAssignmentRoutes'));
+app.use('/api/shipment-details', require('./Routes/shipmentRoute'));
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
