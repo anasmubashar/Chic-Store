@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const orderItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
+    ref: "products",
     required: true,
   },
   quantity: { type: Number, required: true },
@@ -30,24 +30,24 @@ const orderSchema = new mongoose.Schema({
   },
   priority: {
     type: String,
-    enum: ['Normal', 'High Priority'],
-    required: true
+    enum: ["Normal", "High Priority"],
+    required: true,
   },
- 
+
   paymentStatus: {
     type: String,
-    enum: ['Paid', 'Unpaid', 'Refunded'],
-    required: true
+    enum: ["Paid", "Unpaid", "Refunded"],
+    required: true,
   },
-  
+
   deliveryNumber: {
     type: String,
-    required: true
+    required: true,
   },
 
   orderID: {
     type: String,
-    unique: true
+    unique: true,
   },
 
   createdAt: { type: Date, default: Date.now },
