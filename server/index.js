@@ -18,8 +18,8 @@ const { MONGO_URL, PORT } = process.env;
 app.use(
   cors({
     origin: [
-      "https://chic-store-mbky-j8umomabc-anasmubashars-projects.vercel.app",
-      "https://chic-store-nine.vercel.app",
+      `${process.env.FRONTEND_URL}`,
+      `${process.env.FRONTEND_DOMAIN}/`,
       "http://localhost:5173",
       "http://localhost:4000",
     ],
