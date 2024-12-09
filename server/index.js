@@ -25,13 +25,8 @@ app.listen(PORT, () => {
 
 app.use(
   cors({
-    origin: [
-      `${process.env.FRONTEND_URL}`,
-      // "http://localhost:5173",
-      "http://localhost:4000",
-      "http://localhost:5000",
-    ],
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    origin: true, // Allows all origins
+    methods: ["GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
