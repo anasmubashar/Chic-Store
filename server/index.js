@@ -20,6 +20,8 @@ app.use(
     origin: [
       "https://chic-store-mbky-j8umomabc-anasmubashars-projects.vercel.app",
       "https://chic-store-nine.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:4000",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
