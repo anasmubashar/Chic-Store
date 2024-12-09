@@ -14,29 +14,30 @@ const searchRoutes = require("./Routes/searchRoute");
 const modiweekRoutes = require("./Routes/modiweekRoutes");
 const { MONGO_URL, PORT } = process.env;
 
-mongoose
-  .connect(MONGO_URL)
-  .then(() => console.log("MongoDB is  connected successfully"))
-  .catch((err) => console.error(err));
-
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
-});
-
+// Apply CORS middleware first
 app.use(
   cors({
-    origin: true, // Allows all origins
-    methods: ["GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"],
+    origin: [
+      "https://chic-store-mbky-j8umomabc-anasmubashars-projects.vercel.app",
+      "https://chic-store-nine.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   })
 );
+
+// Then apply other middleware
+app.use(express.json());
 app.use(cookieParser());
 
-app.use(express.json());
+// Connect to MongoDB
+mongoose
+  .connect(MONGO_URL)
+  .then(() => console.log("MongoDB is connected successfully"))
+  .catch((err) => console.error(err));
 
+// Define routes
 app.use("/", authRoute);
-
-// Routes
 app.use("/api/driver", require("./Routes/driverRoutes"));
 app.use("/api/bus", require("./Routes/busRoutes"));
 app.use("/api/profile", require("./Routes/profileRoutes"));
@@ -44,7 +45,6 @@ app.use("/api/invoices", require("./Routes/invoiceRoutes"));
 app.use("/api/delivery/orders", require("./Routes/orderRoutes"));
 app.use("/api/assign", require("./Routes/orderAssignmentRoutes"));
 app.use("/api/shipment-details", require("./Routes/shipmentRoute"));
-
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
@@ -53,5 +53,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/modiweek", modiweekRoutes);
 
-// Preflight request handling for OPTIONS method if needed (most of the time `cors` handles it)
-app.options("*", cors());
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
