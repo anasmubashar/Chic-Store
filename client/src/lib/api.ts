@@ -3,7 +3,9 @@ export async function getProducts(params: Record<string, string> = {}) {
   const response = await fetch(
     `${import.meta.env.VITE_SERVER_URL}/api/products?${searchParams}`,
     {
-      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
   );
   if (!response.ok) throw new Error("Failed to fetch products");
@@ -14,7 +16,9 @@ export async function getProduct(id: string) {
   const response = await fetch(
     `${import.meta.env.VITE_SERVER_URL}/api/products/${id}`,
     {
-      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
   );
   if (!response.ok) throw new Error("Failed to fetch product");
@@ -23,7 +27,9 @@ export async function getProduct(id: string) {
 
 export async function getCart() {
   const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/cart`, {
-    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) throw new Error("Failed to fetch cart");
   return response.json();
