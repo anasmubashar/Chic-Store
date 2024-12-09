@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -9,19 +9,39 @@ export default function Component() {
   const [activeTab, setActiveTab] = useState("login");
   const navigate = useNavigate();
 
-  // Login form state
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
-  // Signup form state
   const [signupData, setSignupData] = useState({
     email: "",
     password: "",
     username: "",
     userType: "customer",
   });
+
+  useEffect(() => {
+    const loadGoogleScript = () => {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleSignIn;
+      document.body.appendChild(script);
+    };
+    loadGoogleScript();
+  }, []);
+
+  const initializeGoogleSignIn = () => {
+    window.google.accounts.id.initialize({
+      client_id:
+        "534784964272-jbr7mh16lrq9l40ghvsoo940r7h0l06n.apps.googleusercontent.com",
+      callback: handleGoogleResponse,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,20 +55,11 @@ export default function Component() {
       );
 
       if (data.success) {
-        // alert(data.message);
-        if (data.user.role === "delivery") {
-          console.log("Navigating to /vendor");
-          navigate("/delivery");
-        } else if (data.user.role === "admin") {
-          console.log("Navigating to /admin");
-          navigate("/admin");
-        } else {
-          console.log("Navigating to /");
-          navigate("/");
-        }
+        handleSuccessfulAuth(data.user);
       }
     } catch (error) {
-      alert("Invalid credentials");
+      console.error("Login error:", error);
+      alert("Invalid credentials or server error");
     } finally {
       setIsLoading(false);
     }
@@ -67,21 +78,56 @@ export default function Component() {
 
       if (data.success) {
         alert(data.message);
-        if (data.user.role === "delivery") {
-          console.log("Navigating to /vendor");
-          navigate("/delivery");
-        } else if (data.user.role === "admin") {
-          console.log("Navigating to /admin");
-          navigate("/admin");
-        } else {
-          console.log("Navigating to /");
-          navigate("/");
-        }
+        handleSuccessfulAuth(data.user);
       }
     } catch (error) {
-      alert(`Signup failed ${error.message}`);
+      console.error("Signup error:", error);
+      alert(`Signup failed: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    try {
+      window.google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          console.error("Google Sign-In prompt not displayed:", notification);
+        }
+      });
+    } catch (error) {
+      console.error("Error initiating Google Sign-In:", error);
+      alert("Failed to initiate Google Sign-In. Please try again.");
+    }
+  };
+
+  const handleGoogleResponse = async (response) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/google-auth`,
+        { credential: response.credential },
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        handleSuccessfulAuth(data.user);
+      }
+    } catch (error) {
+      console.error("Error during Google sign in:", error);
+      alert("Failed to sign in with Google. Please try again.");
+    }
+  };
+
+  const handleSuccessfulAuth = (user) => {
+    if (user.role === "delivery") {
+      console.log("Navigating to /delivery");
+      navigate("/delivery");
+    } else if (user.role === "admin") {
+      console.log("Navigating to /admin");
+      navigate("/admin");
+    } else {
+      console.log("Navigating to /");
+      navigate("/");
     }
   };
 
@@ -166,6 +212,19 @@ export default function Component() {
                 {isLoading ? "PROCESSING..." : "LOGIN"}
               </button>
             </form>
+            <div className="mt-4">
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-sm hover:bg-gray-50 transition-colors text-sm tracking-wide flex items-center justify-center"
+              >
+                <img
+                  src="/google-icon.png"
+                  alt="Google"
+                  className="w-5 h-5 mr-2"
+                />
+                Login with Google
+              </button>
+            </div>
           </div>
         )}
 
@@ -243,6 +302,19 @@ export default function Component() {
                 {isLoading ? "PROCESSING..." : "CREATE ACCOUNT"}
               </button>
             </form>
+            <div className="mt-4">
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-sm hover:bg-gray-50 transition-colors text-sm tracking-wide flex items-center justify-center"
+              >
+                <img
+                  src="/google-icon.png"
+                  alt="Google"
+                  className="w-5 h-5 mr-2"
+                />
+                Sign up with Google
+              </button>
+            </div>
           </div>
         )}
       </div>

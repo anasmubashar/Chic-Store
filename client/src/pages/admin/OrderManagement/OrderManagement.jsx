@@ -86,42 +86,43 @@ export default function OrderManagement() {
           <h1 className="text-xl font-bold">Admin Panel</h1>
         </div>
         <nav className="mt-6">
-          <a
-            href="#"
+          <Link
+            to="/admin/orders"
             className="flex items-center px-6 py-3 text-blue-600 bg-blue-50"
           >
             <Package className="w-5 h-5 mr-3" />
             Orders
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/admin/products"
             className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
           >
             <Package className="w-5 h-5 mr-3" />
             Products
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/admin/users"
             className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
           >
             <Users className="w-5 h-5 mr-3" />
             Users
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/admin/reports"
             className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
           >
             <BarChart2 className="w-5 h-5 mr-3" />
             Reports
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/admin/shipping"
             className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50"
           >
             <Truck className="w-5 h-5 mr-3" />
             Shipping
-          </a>
+          </Link>
         </nav>
+              
       </aside>
 
       {/* Main Content */}

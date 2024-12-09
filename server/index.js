@@ -1,8 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+
 const app = express();
 require("dotenv").config();
+const { OAuth2Client } = require("google-auth-library");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./Routes/AuthRoute");
 const productRoutes = require("./Routes/ProductRoute");
@@ -13,6 +16,9 @@ const cartRoutes = require("./Routes/CartRoute");
 const searchRoutes = require("./Routes/searchRoute");
 const modiweekRoutes = require("./Routes/modiweekRoutes");
 const { MONGO_URL, PORT } = process.env;
+
+const JWT_SECRET = process.env.TOKEN_KEY; // Use an environment variable for the JWT secret
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Apply CORS middleware first
 app.use(
@@ -56,6 +62,39 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/modiweek", modiweekRoutes);
 
+app.post("/google-auth", async (req, res) => {
+  try {
+    const { credential } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    // Here, you should check if the user exists in your database
+    // If not, create a new user
+    // For this example, we'll assume a user object:
+    const user = { email, username: name, role: "customer" };
+
+    const token = jwt.sign({ email: user.email, role: user.role }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.json({ success: true, user: { email: user.email, role: user.role } });
+  } catch (error) {
+    console.error("Google auth error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error authenticating with Google" });
+  }
+});
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
