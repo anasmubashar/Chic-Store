@@ -52,3 +52,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/modiweek", modiweekRoutes);
+
+// Preflight request handling for OPTIONS method if needed (most of the time `cors` handles it)
+app.options("*", cors());
