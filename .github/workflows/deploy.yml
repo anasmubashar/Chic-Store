@@ -24,7 +24,7 @@ jobs:
       - name: Build and push Frontend image
         uses: docker/build-push-action@v3
         with:
-          context: ./client
+          context: ./frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USER }}/chic-store-frontend:latest
 
@@ -38,22 +38,16 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
 
-      - name: Write kubeconfig
-        run: |
-          mkdir $HOME\.kube -ErrorAction Ignore
-          '<<EOF' > $HOME\.kube\config
-          ${{ secrets.KUBECONFIG }}
-          'EOF'
-        shell: pwsh -NoProfile -ExecutionPolicy Bypass
-
       - name: Deploy Server to Minikube
-        shell: pwsh -NoProfile -ExecutionPolicy Bypass
         run: |
           kubectl apply -f k8s/server-deployment.yaml
           kubectl apply -f k8s/server-service.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
       - name: Deploy Frontend to Minikube
-        shell: pwsh -NoProfile -ExecutionPolicy Bypass
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
