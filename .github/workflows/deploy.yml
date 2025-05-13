@@ -38,12 +38,22 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
 
+      - name: Write kubeconfig
+        run: |
+          mkdir $HOME\.kube -ErrorAction Ignore
+          '<<EOF' > $HOME\.kube\config
+          ${{ secrets.KUBECONFIG }}
+          'EOF'
+        shell: pwsh -NoProfile -ExecutionPolicy Bypass
+
       - name: Deploy Server to Minikube
+        shell: pwsh -NoProfile -ExecutionPolicy Bypass
         run: |
           kubectl apply -f k8s/server-deployment.yaml
           kubectl apply -f k8s/server-service.yaml
 
       - name: Deploy Frontend to Minikube
+        shell: pwsh -NoProfile -ExecutionPolicy Bypass
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
