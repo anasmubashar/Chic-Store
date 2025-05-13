@@ -2,7 +2,7 @@ const {
   createOrder,
   getUserOrders,
   getOrderById,
-} = require("../controllers/orderController.js");
+} = require("../Controllers/orderController.js");
 
 const { userVerification } = require("../Middlewares/AuthMiddleware");
 

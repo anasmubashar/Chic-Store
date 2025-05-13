@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chic-server-svc
+  namespace: chicstore
+spec:
+  selector:
+    app: chic-server
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
+  # ClusterIP is fine for internal communication
+  type: ClusterIP

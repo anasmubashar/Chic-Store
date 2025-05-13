@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chicstore-deployment
+  namespace: chicstore
+  labels:
+    app: chicstore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chicstore
+  template:
+    metadata:
+      labels:
+        app: chicstore
+    spec:
+      containers:
+        - name: chicstore-app
+          image: anasmubashar1/chicstore-frontend:latest
+          ports:
+            - containerPort: 5173
+          env:
+            - name: VITE_SERVER_URL
+              value: "http://chic-server-svc.chicstore.svc.cluster.local:5000"
+          imagePullPolicy: IfNotPresent

@@ -2,7 +2,7 @@ const {
   getAllProducts,
   getProductById,
   checkStock,
-} = require("../Controllers/productController.js");
+} = require("../Controllers/ProductController.js");
 
 const router = require("express").Router();
 router.get("/", getAllProducts);

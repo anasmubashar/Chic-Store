@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chic-server
+  namespace: chicstore
+  labels:
+    app: chic-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chic-server
+  template:
+    metadata:
+      labels:
+        app: chic-server
+    spec:
+      containers:
+        - name: chic-server
+          image: anasmubashar1/chicstore-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "5000"
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: chicstore-backend-secrets
+                  key: MONGO_URI
