@@ -24,7 +24,7 @@ jobs:
       - name: Build and push Frontend image
         uses: docker/build-push-action@v3
         with:
-          context: ./frontend
+          context: ./client
           push: true
           tags: ${{ secrets.DOCKERHUB_USER }}/chic-store-frontend:latest
 
