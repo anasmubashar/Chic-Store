@@ -327,9 +327,9 @@ export default function ProductManagement() {
             {filteredProducts.map((product) => (
               <div key={product._id} className="bg-white rounded-lg shadow">
                 <img
-                  src={product.image}
+                  src={product.images[0]}
                   alt={product.name}
-                  className="w-full h-48 object-cover rounded-t-lg"
+                  className="w-full h-48 object-contain rounded-t-lg"
                 />
                 <div className="p-4">
                   <div className="flex items-center justify-between">
