@@ -211,13 +211,22 @@ export default function ProductManagement() {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [searchQuery]);
 
   const fetchProducts = async () => {
-    const response = await axios.get(
-      `${import.meta.env.VITE_SERVER_URL}/api/products?${searchParams}`
-    );
-    setProducts(response.data);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/api/products`,
+        {
+          params: {
+            search: searchQuery,
+          },
+        }
+      );
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
   };
 
   const addProduct = async (newProduct) => {

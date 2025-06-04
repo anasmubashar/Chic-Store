@@ -25,6 +25,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { Link } from "react-router-dom";
 
 // Sample data
 const monthlyData = [
